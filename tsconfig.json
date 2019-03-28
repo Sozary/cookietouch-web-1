@@ -17,12 +17,11 @@
     "strictNullChecks": true,
     "suppressImplicitAnyIndexErrors": true,
     "noUnusedLocals": true,
-    "resolveJsonModule": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "paths": {
-      "@/*": [ "./src/*" ],
-      "@components/*": [ "./src/components/*" ],
+      "@/*": ["./src/*"],
+      "@components/*": ["./src/components/*"],
       "@utils/*": ["./src/utils/*"]
     }
   },
