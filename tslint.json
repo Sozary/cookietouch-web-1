@@ -7,6 +7,8 @@
     ]
   },
   "rules": {
-    "no-empty-interface": false
+    "no-empty-interface": false,
+    "ordered-imports": false,
+    "no-console": false
   }
 }

@@ -1,16 +1,16 @@
-import firebase from "firebase";
+import firebase from 'firebase'
 
 export function initialize() {
   const config = {
-    apiKey: "AIzaSyDWK5MrCUhiluOfj8emZT_ARUpbkzbwKTE",
-    authDomain: "cookietouch-52c0c.firebaseapp.com",
-    databaseURL: "https://cookietouch-52c0c.firebaseio.com",
-    messagingSenderId: "423749577733",
-    projectId: "cookietouch-52c0c",
-    storageBucket: "cookietouch-52c0c.appspot.com"
-  };
+    apiKey: 'AIzaSyDWK5MrCUhiluOfj8emZT_ARUpbkzbwKTE',
+    authDomain: 'cookietouch-52c0c.firebaseapp.com',
+    databaseURL: 'https://cookietouch-52c0c.firebaseio.com',
+    messagingSenderId: '423749577733',
+    projectId: 'cookietouch-52c0c',
+    storageBucket: 'cookietouch-52c0c.appspot.com',
+  }
 
-  return firebase.initializeApp(config);
+  return firebase.initializeApp(config)
 }
 
 export async function signin(
@@ -18,15 +18,15 @@ export async function signin(
   password: string
 ): Promise<boolean> {
   try {
-    await firebase.auth().signInWithEmailAndPassword(email, password);
-    return true;
+    await firebase.auth().signInWithEmailAndPassword(email, password)
+    return true
   } catch (error) {
-    throw error;
+    throw error
   }
 }
 
 export async function signout() {
-  await firebase.auth().signOut();
+  await firebase.auth().signOut()
 }
 
 export async function signup(
@@ -36,48 +36,58 @@ export async function signup(
   try {
     const userCred = await firebase
       .auth()
-      .createUserWithEmailAndPassword(email, password);
+      .createUserWithEmailAndPassword(email, password)
     if (!userCred.user) {
-      return false;
+      return false
     }
-    userCred.user.sendEmailVerification();
-    return true;
+    userCred.user.sendEmailVerification()
+    return true
   } catch (error) {
-    throw error;
+    throw error
   }
+}
+
+export function getinfo() {
+  firebase.auth().onAuthStateChanged(user => {
+    if (!user) {
+      return
+    }
+    const uid = user.uid
+    console.log(firebase.database().ref(`/users/${uid}/config/global`))
+  })
 }
 
 export function presence() {
   firebase.auth().onAuthStateChanged(user => {
     if (!user) {
-      return;
+      return
     }
-    const uid = user.uid;
-    const userStatusDatabaseRef = firebase.database().ref(`/status/${uid}`);
+    const uid = user.uid
+    const userStatusDatabaseRef = firebase.database().ref(`/status/${uid}`)
     const isOfflineForDatabase = {
       last_changed: firebase.database.ServerValue.TIMESTAMP,
-      state: "offline"
-    };
+      state: 'offline',
+    }
     const isOnlineForDatabase = {
       last_changed: firebase.database.ServerValue.TIMESTAMP,
-      state: "online"
-    };
+      state: 'online',
+    }
     firebase
       .database()
-      .ref(".info/connected")
-      .on("value", snapshot => {
+      .ref('.info/connected')
+      .on('value', snapshot => {
         if (!snapshot) {
-          return;
+          return
         }
         if (snapshot.val() === false) {
-          return;
+          return
         }
         userStatusDatabaseRef
           .onDisconnect()
           .set(isOfflineForDatabase)
           .then(() => {
-            userStatusDatabaseRef.set(isOnlineForDatabase);
-          });
-      });
-  });
+            userStatusDatabaseRef.set(isOnlineForDatabase)
+          })
+      })
+  })
 }
